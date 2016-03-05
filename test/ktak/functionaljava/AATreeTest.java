@@ -100,6 +100,26 @@ public class AATreeTest {
     }
     
     @Test
+    public void testRemove() {
+        
+        AATree<Integer> tree = AATree.emptyTree(cmp);
+        List<Integer> list = consecutiveIntegerList(1000);
+        Integer treeSize = 0;
+        for (Integer uniqueInt : list) {
+            tree = tree.insert(uniqueInt);
+            treeSize++;
+        }
+        
+        for (Integer uniqueInt : list) {
+            tree = tree.remove(uniqueInt);
+            treeSize--;
+            Assert.assertEquals(treeSize, AATree.size(tree));
+            Assert.assertFalse(tree.contains(uniqueInt));
+        }
+        
+    }
+    
+    @Test
     public void testInvariants() {
         
         AATree<Integer> tree = AATree.emptyTree(cmp);
@@ -107,6 +127,16 @@ public class AATreeTest {
                 new InvariantsVisitor<Integer>();
         
         List<Integer> randomList = randomIntegerList(1000);
+        for (Integer random : randomList) {
+            tree = tree.insert(random);
+            Assert.assertTrue(tree.visit(invariantsVisitor));
+        }
+        
+        for (int i=0; i < randomList.size() / 2; i++) {
+            tree = tree.remove(randomList.get(i));
+            Assert.assertTrue(tree.visit(invariantsVisitor));
+        }
+        
         for (Integer random : randomList) {
             tree = tree.insert(random);
             Assert.assertTrue(tree.visit(invariantsVisitor));
@@ -156,7 +186,7 @@ public class AATreeTest {
         return tree.visit(new AATree.Visitor<List<T>,T>() {
             
             @Override
-            public List<T> visitLeaf() {
+            public List<T> visitLeaf(Leaf<T> leaf) {
                 return new ArrayList<T>();
             }
             
@@ -184,7 +214,7 @@ public class AATreeTest {
     private class InvariantsVisitor<T> implements AATree.Visitor<Boolean,T> {
 
         @Override
-        public Boolean visitLeaf() {
+        public Boolean visitLeaf(Leaf<T> leaf) {
             return true;
         }
 
@@ -194,34 +224,10 @@ public class AATreeTest {
                     satisfiesInvariant2(node) &&
                     satisfiesInvariant3(node) &&
                     satisfiesInvariant4(node) &&
-                    satisfiesInvariant5(node);
+                    satisfiesInvariant5(node) &&
+                    node.left.visit(this) &&
+                    node.right.visit(this);
         }
-        
-    }
-    
-    /* a node is a leaf if both its children are Leaf instances */
-    private <T> Boolean isLeaf(Node<T> node) {
-        
-        return node.visit(new AATree.Visitor<Boolean,T>() {
-            
-            @Override
-            public Boolean visitLeaf() {
-                return false;
-            }
-            
-            @Override
-            public Boolean visitNode(Node<T> node) {
-                
-                if ((node.left instanceof Leaf) &&
-                        (node.right instanceof Leaf)) {
-                    return true;
-                }
-                
-                return false;
-                
-            }
-            
-        });
         
     }
     
@@ -230,7 +236,7 @@ public class AATreeTest {
         return node.left.visit(new AATree.Visitor<Boolean,T>() {
             
             @Override
-            public Boolean visitLeaf() {
+            public Boolean visitLeaf(Leaf<T> leaf) {
                 return false;
             }
             
@@ -248,7 +254,7 @@ public class AATreeTest {
         return node.right.visit(new AATree.Visitor<Boolean,T>() {
             
             @Override
-            public Boolean visitLeaf() {
+            public Boolean visitLeaf(Leaf<T> leaf) {
                 return false;
             }
             
@@ -272,7 +278,7 @@ public class AATreeTest {
     
     private <T> Boolean satisfiesInvariant1(Node<T> node) {
         
-        if (!isLeaf(node))
+        if (!AATree.isLeafNode(node))
             return true;
         
         if (node.level == 1)
