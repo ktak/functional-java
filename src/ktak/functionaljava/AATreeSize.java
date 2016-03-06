@@ -3,7 +3,7 @@ package ktak.functionaljava;
 import ktak.functionaljava.AATree.Leaf;
 import ktak.functionaljava.AATree.Node;
 
-public class AATreeSize<T> implements AATree.Visitor<Long,T> {
+class AATreeSize<T> implements AATree.Visitor<Long,T> {
     
     @Override
     public Long visitLeaf(Leaf<T> leaf) {
