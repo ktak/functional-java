@@ -41,10 +41,9 @@ public abstract class AATree<T> {
         public final AATree<T> left;
         public final AATree<T> right;
         
-        Node(int level, T value, AATree<T> left, AATree<T> right,
-                Comparator<T> comparator) {
+        Node(int level, T value, AATree<T> left, AATree<T> right) {
             
-            super(comparator);
+            super(left.comparator);
             
             this.level = level;
             this.value = value;
@@ -80,7 +79,7 @@ public abstract class AATree<T> {
             if (correctLevel < level) {
                 AATree<T> rightChild = correctLevel < right.level() ?
                         right.changeLevel(correctLevel) : right;
-                return new Node<T>(correctLevel, value, left, rightChild, comparator);
+                return new Node<T>(correctLevel, value, left, rightChild);
             }
             
             return this;
@@ -91,7 +90,7 @@ public abstract class AATree<T> {
             
             Node<T> successor = right.getLeftMost();
             return new Node<T>(level, successor.value,
-                    left, right.removeLeftMost(), comparator);
+                    left, right.removeLeftMost());
             
         }
         
@@ -99,7 +98,7 @@ public abstract class AATree<T> {
             
             Node<T> predecessor = this.left.getRightMost();
             return new Node<T>(this.level, predecessor.value,
-                    this.left.removeRightMost(), this.right, this.comparator);
+                    this.left.removeRightMost(), this.right);
             
         }
         
@@ -164,8 +163,8 @@ public abstract class AATree<T> {
             
             @Override
             public AATree<T> visitNode(Node<T> node) {
-                return new Node<T>(node.level, node.value, node.left, node.right.skewRightChild(),
-                        node.comparator);
+                return new Node<T>(node.level, node.value,
+                        node.left, node.right.skewRightChild());
             }
             
         });
@@ -183,8 +182,7 @@ public abstract class AATree<T> {
             
             @Override
             public AATree<T> visitNode(Node<T> node) {
-                return new Node<T>(node.level, node.value, node.left, node.right.skew(),
-                        node.comparator);
+                return new Node<T>(node.level, node.value, node.left, node.right.skew());
             }
             
         });
@@ -202,8 +200,7 @@ public abstract class AATree<T> {
             
             @Override
             public AATree<T> visitNode(Node<T> node) {
-                return new Node<T>(node.level, node.value, node.left, node.right.split(),
-                        node.comparator);
+                return new Node<T>(node.level, node.value, node.left, node.right.split());
             }
             
         });
@@ -272,8 +269,8 @@ public abstract class AATree<T> {
                     return emptyTree(node.comparator);
                 
                 return new Node<T>(
-                        node.level, node.value, node.left, node.right.visit(this),
-                        node.comparator).rebalanceAfterRemoval();
+                        node.level, node.value, node.left, node.right.visit(this))
+                        .rebalanceAfterRemoval();
                 
             }
             
@@ -297,8 +294,8 @@ public abstract class AATree<T> {
                     return emptyTree(node.comparator);
                 
                 return new Node<T>(
-                        node.level, node.value, node.left.visit(this), node.right,
-                        node.comparator).rebalanceAfterRemoval();
+                        node.level, node.value, node.left.visit(this), node.right)
+                        .rebalanceAfterRemoval();
                 
             }
             
@@ -318,7 +315,7 @@ public abstract class AATree<T> {
             @Override
             public AATree<T> visitNode(Node<T> node) {
                 return new Node<T>(
-                        newLevel, node.value, node.left, node.right, node.comparator);
+                        newLevel, node.value, node.left, node.right);
             }
             
         });

@@ -43,13 +43,13 @@ class AATreeRemove<T> implements AATree.Visitor<AATree<T>,T> {
         }
         else if (comparison < 0) {
             return new Node<T>(
-                    node.level, node.value, node.left.visit(this), node.right,
-                    node.comparator).rebalanceAfterRemoval();
+                    node.level, node.value, node.left.visit(this), node.right)
+                    .rebalanceAfterRemoval();
         }
         else {
             return new Node<T>(
-                    node.level, node.value, node.left, node.right.visit(this),
-                    node.comparator).rebalanceAfterRemoval();
+                    node.level, node.value, node.left, node.right.visit(this))
+                    .rebalanceAfterRemoval();
         }
         
     }

@@ -15,8 +15,7 @@ class AATreeInsert<T> implements AATree.Visitor<AATree<T>,T> {
                 1,
                 value,
                 AATree.emptyTree(leaf.comparator),
-                AATree.emptyTree(leaf.comparator),
-                leaf.comparator);
+                AATree.emptyTree(leaf.comparator));
     }
     
     @Override
@@ -25,13 +24,13 @@ class AATreeInsert<T> implements AATree.Visitor<AATree<T>,T> {
         final int comparison = node.comparator.compare(value, node.value);
         if (comparison < 0) {
             return new Node<T>(
-                    node.level, node.value, node.left.visit(this), node.right,
-                    node.comparator).skew().split();
+                    node.level, node.value, node.left.visit(this), node.right)
+                    .skew().split();
         }
         else {
             return new Node<T>(
-                    node.level, node.value, node.left, node.right.visit(this),
-                    node.comparator).skew().split();
+                    node.level, node.value, node.left, node.right.visit(this))
+                    .skew().split();
         }
         
     }

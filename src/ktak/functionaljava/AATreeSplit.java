@@ -40,10 +40,8 @@ class AATreeSplit<T> implements AATree.Visitor<AATree<T>,T> {
                                     new Node<T>(
                                             node.level, node.value,
                                             node.left,
-                                            childNode.left,
-                                            node.comparator),
-                                    grandChildNode,
-                                    node.comparator);
+                                            childNode.left),
+                                    grandChildNode);
                             
                         }
                         else {

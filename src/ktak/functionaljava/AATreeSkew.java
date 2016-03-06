@@ -30,9 +30,7 @@ class AATreeSkew<T> implements AATree.Visitor<AATree<T>,T> {
                             new Node<T>(
                                     node.level, node.value,
                                     childNode.right,
-                                    node.right,
-                                    node.comparator),
-                            node.comparator);
+                                    node.right));
                 }
                 else {
                     return node;
