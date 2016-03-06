@@ -6,6 +6,15 @@ import org.junit.Assert;
 
 public class ListTest {
     
+    private static final Eq<Integer> eq = new Eq<Integer>() {
+
+        @Override
+        public boolean equals(Integer t1, Integer t2) {
+            return t1.equals(t2);
+        }
+        
+    };
+    
     @Test
     public void testLength() {
         
@@ -28,28 +37,34 @@ public class ListTest {
         
         List<Integer> l4 = new List.Nil<Integer>().cons(9).cons(3).cons(-1);
         
-        Eq<Integer> intComparator = new Eq<Integer>() {
-
-            @Override
-            public boolean equals(Integer t1, Integer t2) {
-                return t1.equals(t2);
-            }
-            
-        };
+        Assert.assertTrue(new List.Nil<Integer>().equalTo(new List.Nil<Integer>(), eq));
         
-        Assert.assertTrue(new List.Nil<Integer>().equalTo(new List.Nil<Integer>(), intComparator));
+        Assert.assertTrue(l1.equalTo(l1, eq));
         
-        Assert.assertTrue(l1.equalTo(l1, intComparator));
+        Assert.assertTrue(l1.equalTo(l2, eq));
         
-        Assert.assertTrue(l1.equalTo(l2, intComparator));
+        Assert.assertFalse(new List.Nil<Integer>().equalTo(l1, eq));
         
-        Assert.assertFalse(new List.Nil<Integer>().equalTo(l1, intComparator));
+        Assert.assertFalse(l2.equalTo(new List.Nil<Integer>(), eq));
         
-        Assert.assertFalse(l2.equalTo(new List.Nil<Integer>(), intComparator));
+        Assert.assertFalse(l1.equalTo(l3, eq));
         
-        Assert.assertFalse(l1.equalTo(l3, intComparator));
+        Assert.assertFalse(l2.equalTo(l4, eq));
         
-        Assert.assertFalse(l2.equalTo(l4, intComparator));
+    }
+    
+    @Test
+    public void testReverse() {
+        
+        List<Integer> l1 = new List.Nil<Integer>().cons(1).cons(2).cons(3);
+        
+        List<Integer> l2 = new List.Nil<Integer>().cons(3).cons(2).cons(1);
+        
+        Assert.assertTrue(new List.Nil<Integer>().equalTo(new List.Nil<Integer>().reverse(), eq));
+        
+        Assert.assertTrue(l1.equalTo(l1.reverse().reverse(), eq));
+        
+        Assert.assertTrue(l1.equalTo(l2.reverse(), eq));
         
     }
     

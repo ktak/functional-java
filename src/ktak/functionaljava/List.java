@@ -47,4 +47,8 @@ public abstract class List<T> {
         return this.visit(new ListEqualTo<T>(other, eq));
     }
     
+    public List<T> reverse() {
+        return this.visit(new ListReverse<T>(new Nil<T>()));
+    }
+    
 }
