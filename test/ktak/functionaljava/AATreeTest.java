@@ -28,7 +28,7 @@ public class AATreeTest {
         AATree<Integer> tree = AATree.emptyTree(cmp);
         Long treeSize = 0L;
         
-        List<Integer> list = consecutiveIntegerList(1000);
+        List<Integer> list = randomIntegerList(1000, 100);
         
         for (Integer val : list) {
             tree = tree.insert(val);
@@ -43,7 +43,7 @@ public class AATreeTest {
         
         for (int i=0; i < 10; i++) {
             
-            List<Integer> randomList = randomIntegerList(100);
+            List<Integer> randomList = randomIntegerList(100, 25);
             AATree<Integer> tree = AATree.emptyTree(cmp);
             for (Integer random : randomList) {
                 tree = tree.insert(random);
@@ -126,7 +126,7 @@ public class AATreeTest {
         AATree.Visitor<Boolean,Integer> invariantsVisitor =
                 new InvariantsVisitor<Integer>();
         
-        List<Integer> randomList = randomIntegerList(1000);
+        List<Integer> randomList = randomIntegerList(1000, 50);
         for (Integer random : randomList) {
             tree = tree.insert(random);
             Assert.assertTrue(tree.visit(invariantsVisitor));
@@ -154,12 +154,12 @@ public class AATreeTest {
         
     }
     
-    private List<Integer> randomIntegerList(int size) {
+    private List<Integer> randomIntegerList(int size, int modulo) {
         
         List<Integer> randomList = new ArrayList<Integer>();
         Random rand = new Random();
         for (int i=0; i < size; i++) {
-            randomList.add(rand.nextInt());
+            randomList.add(rand.nextInt() % modulo);
         }
         return randomList;
         
