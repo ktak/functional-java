@@ -11,9 +11,9 @@ public class ListTest {
         
         List<Integer> l = new List.Nil<Integer>().cons(1).cons(2).cons(3);
         
-        Assert.assertTrue(List.length(new List.Nil<Integer>()).equals(0L));
+        Assert.assertTrue(new List.Nil<Integer>().length().equals(0L));
         
-        Assert.assertTrue(List.length(l).equals(3L));
+        Assert.assertTrue(l.length().equals(3L));
         
     }
     
@@ -37,19 +37,19 @@ public class ListTest {
             
         };
         
-        Assert.assertTrue(List.equals(new List.Nil<Integer>(), new List.Nil<Integer>(), intComparator));
+        Assert.assertTrue(new List.Nil<Integer>().equalTo(new List.Nil<Integer>(), intComparator));
         
-        Assert.assertTrue(List.equals(l1, l1, intComparator));
+        Assert.assertTrue(l1.equalTo(l1, intComparator));
         
-        Assert.assertTrue(List.equals(l1, l2, intComparator));
+        Assert.assertTrue(l1.equalTo(l2, intComparator));
         
-        Assert.assertFalse(List.equals(new List.Nil<Integer>(), l1, intComparator));
+        Assert.assertFalse(new List.Nil<Integer>().equalTo(l1, intComparator));
         
-        Assert.assertFalse(List.equals(l2, new List.Nil<Integer>(), intComparator));
+        Assert.assertFalse(l2.equalTo(new List.Nil<Integer>(), intComparator));
         
-        Assert.assertFalse(List.equals(l1, l3, intComparator));
+        Assert.assertFalse(l1.equalTo(l3, intComparator));
         
-        Assert.assertFalse(List.equals(l2, l4, intComparator));
+        Assert.assertFalse(l2.equalTo(l4, intComparator));
         
     }
     
