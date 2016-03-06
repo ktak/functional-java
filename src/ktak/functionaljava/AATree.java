@@ -122,57 +122,7 @@ public abstract class AATree<T> {
     }
     
     public AATree<T> remove(final T value) {
-        
-        final AATree<T> tree = this;
-        
-        return tree.visit(new Visitor<AATree<T>,T>() {
-            
-            @Override
-            public AATree<T> visitLeaf(Leaf<T> leaf) {
-                return leaf;
-            }
-            
-            @Override
-            public AATree<T> visitNode(final Node<T> node) {
-                
-                final int comparison = tree.comparator.compare(value, node.value);
-                if (comparison == 0) {
-                    
-                    if (node.isLeafNode())
-                        return emptyTree(tree.comparator);
-                    
-                    return node.left.visit(new Visitor<AATree<T>,T>() {
-                        
-                        @Override
-                        public AATree<T> visitLeaf(Leaf<T> leaf) {
-                            return node.removeAndReplaceWithSuccessor()
-                                    .rebalanceAfterRemoval();
-                        }
-                        
-                        @Override
-                        public AATree<T> visitNode(Node<T> lnode) {
-                            return node.removeAndReplaceWithPredecessor()
-                                    .rebalanceAfterRemoval();
-                        }
-                        
-                    });
-                    
-                }
-                else if (comparison < 0) {
-                    return new Node<T>(
-                            node.level, node.value, node.left.visit(this), node.right,
-                            node.comparator).rebalanceAfterRemoval();
-                }
-                else {
-                    return new Node<T>(
-                            node.level, node.value, node.left, node.right.visit(this),
-                            node.comparator).rebalanceAfterRemoval();
-                }
-                
-            }
-            
-        });
-        
+        return this.visit(new AATreeRemove<T>(value));
     }
     
     protected AATree<T> skew() {
