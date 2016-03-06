@@ -9,7 +9,7 @@ public abstract class Option<T> {
         public R visitSome(T value);
     }
     
-    public static class None<T> extends Option<T> {
+    public static final class None<T> extends Option<T> {
         
         @Override
         public <R> R visit(Visitor<R, T> visitor) {
@@ -18,7 +18,7 @@ public abstract class Option<T> {
         
     }
     
-    public static class Some<T> extends Option<T> {
+    public static final class Some<T> extends Option<T> {
         
         private final T val;
         

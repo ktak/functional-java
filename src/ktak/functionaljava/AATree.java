@@ -17,7 +17,7 @@ public abstract class AATree<T> {
     
     public abstract <R> R visit(Visitor<R,T> visitor);
     
-    public static class Leaf<T> extends AATree<T> {
+    public static final class Leaf<T> extends AATree<T> {
         
         public Leaf(Comparator<T> comparator) {
             super(comparator);
@@ -34,7 +34,7 @@ public abstract class AATree<T> {
         return new Leaf<T>(comparator);
     }
     
-    public static class Node<T> extends AATree<T> {
+    public static final class Node<T> extends AATree<T> {
         
         protected final int level;
         public final T value;

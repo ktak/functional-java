@@ -9,7 +9,7 @@ public abstract class List<T> {
         public R visitCons(T head, List<T> tail);
     }
     
-    public static class Nil<T> extends List<T> {
+    public static final class Nil<T> extends List<T> {
 
         @Override
         public <R> R visit(Visitor<R, T> visitor) {
