@@ -68,4 +68,19 @@ public class ListTest {
         
     }
     
+    @Test
+    public void testAppend() {
+        
+        List<Integer> l1 = new List.Nil<Integer>().cons(3).cons(2).cons(1);
+        
+        List<Integer> l2 = new List.Nil<Integer>().cons(6).cons(5).cons(4);
+        
+        List<Integer> l3 = new List.Nil<Integer>().cons(6).cons(5).cons(4).cons(3).cons(2).cons(1);
+        
+        Assert.assertTrue(l3.equalTo(l1.append(l2), eq));
+        
+        Assert.assertTrue(l1.equalTo(l1.append(new List.Nil<Integer>()), eq));
+        
+    }
+    
 }

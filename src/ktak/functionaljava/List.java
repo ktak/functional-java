@@ -51,4 +51,8 @@ public abstract class List<T> {
         return this.visit(new ListReverse<T>(new Nil<T>()));
     }
     
+    public List<T> append(List<T> end) {
+        return this.visit(new ListAppend<T>(end));
+    }
+    
 }
