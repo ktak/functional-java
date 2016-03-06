@@ -12,7 +12,7 @@ public abstract class Option<T> {
     public static class None<T> extends Option<T> {
         
         @Override
-        public <R> R visit(ktak.functionaljava.Option.Visitor<R, T> visitor) {
+        public <R> R visit(Visitor<R, T> visitor) {
             return visitor.visitNone();
         }
         
@@ -27,7 +27,7 @@ public abstract class Option<T> {
         }
         
         @Override
-        public <R> R visit(ktak.functionaljava.Option.Visitor<R, T> visitor) {
+        public <R> R visit(Visitor<R, T> visitor) {
             return visitor.visitSome(val);
         }
         
