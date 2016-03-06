@@ -33,4 +33,8 @@ public abstract class Option<T> {
         
     }
     
+    public static <T> Option<T> none() { return new None<T>(); }
+    
+    public static <T> Option<T> some(T val) { return new Some<T>(val); }
+    
 }

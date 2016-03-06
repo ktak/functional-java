@@ -41,7 +41,7 @@ public abstract class AATree<T> {
         public final AATree<T> left;
         public final AATree<T> right;
         
-        private Node(int level, T value, AATree<T> left, AATree<T> right,
+        Node(int level, T value, AATree<T> left, AATree<T> right,
                 Comparator<T> comparator) {
             
             super(comparator);
@@ -58,109 +58,67 @@ public abstract class AATree<T> {
             return visitor.visitNode(this);
         }
         
+        private int minLevelOfChildren() {
+            return left.level() < right.level() ? left.level() : right.level();
+        }
+        
+        /* a node is a leaf node if both its children are Leaf instances */
+        protected Boolean isLeafNode() {
+            
+            if ((left instanceof Leaf) &&
+                    (right instanceof Leaf)) {
+                return true;
+            }
+            
+            return false;
+            
+        }
+        
+        private Node<T> decreaseLevel() {
+            
+            int correctLevel = minLevelOfChildren() + 1;
+            if (correctLevel < level) {
+                AATree<T> rightChild = correctLevel < right.level() ?
+                        right.changeLevel(correctLevel) : right;
+                return new Node<T>(correctLevel, value, left, rightChild, comparator);
+            }
+            
+            return this;
+            
+        }
+        
+        protected Node<T> removeAndReplaceWithSuccessor() {
+            
+            Node<T> successor = right.getLeftMost();
+            return new Node<T>(level, successor.value,
+                    left, right.removeLeftMost(), comparator);
+            
+        }
+        
+        protected Node<T> removeAndReplaceWithPredecessor() {
+            
+            Node<T> predecessor = this.left.getRightMost();
+            return new Node<T>(this.level, predecessor.value,
+                    this.left.removeRightMost(), this.right, this.comparator);
+            
+        }
+        
     }
     
     public Long size() {
         return this.visit(new AATreeSize<T>());
     }
     
-    public Boolean contains(final T value) {
-        
-        final AATree<T> tree = this;
-        
-        return tree.visit(new AATree.Visitor<Boolean,T>() {
-
-            @Override
-            public Boolean visitLeaf(Leaf<T> leaf) {
-                return false;
-            }
-
-            @Override
-            public Boolean visitNode(Node<T> node) {
-                
-                final int comparison = tree.comparator.compare(value, node.value);
-                if (comparison == 0) {
-                    return true;
-                }
-                else if (comparison < 0) {
-                    return node.left.visit(this);
-                }
-                else {
-                    return node.right.visit(this);
-                }
-                
-            }
-            
-        });
-        
+    public Boolean contains(T value) {
+        return this.visit(new AATreeContains<T>(value));
     }
     
     public Option<T> get(final T value) {
-        
-        final AATree<T> tree = this;
-        
-        return tree.visit(new AATree.Visitor<Option<T>,T>() {
-            
-            @Override
-            public Option<T> visitLeaf(Leaf<T> leaf) {
-                return new Option.None<T>();
-            }
-            
-            @Override
-            public Option<T> visitNode(Node<T> node) {
-                
-                final int comparison = tree.comparator.compare(value, node.value);
-                if (comparison == 0) {
-                    return new Option.Some<T>(node.value);
-                }
-                else if (comparison < 0) {
-                    return node.left.visit(this);
-                }
-                else {
-                    return node.right.visit(this);
-                }
-                
-            }
-            
-        });
-        
+        return this.visit(new AATreeGet<T>(value));
     }
     
-    public AATree<T> insert(final T value) {
-        
-        final AATree<T> tree = this;
-        
-        return tree.visit(new AATree.Visitor<AATree<T>,T>() {
-            
-            @Override
-            public AATree<T> visitLeaf(Leaf<T> leaf) {
-                return new Node<T>(
-                        1,
-                        value,
-                        emptyTree(tree.comparator),
-                        emptyTree(tree.comparator),
-                        tree.comparator);
-            }
-            
-            @Override
-            public AATree<T> visitNode(Node<T> node) {
-                
-                final int comparison = tree.comparator.compare(value, node.value);
-                if (comparison < 0) {
-                    return split(skew(new Node<T>(
-                            node.level, node.value, node.left.visit(this), node.right,
-                            tree.comparator)));
-                }
-                else {
-                    return split(skew(new Node<T>(
-                            node.level, node.value, node.left, node.right.visit(this),
-                            tree.comparator)));
-                }
-                
-            }
-            
-        });
-        
+    public AATree<T> insert(T value) {
+        return this.visit(new AATreeInsert<T>(value));
     }
     
     public AATree<T> remove(final T value) {
@@ -180,35 +138,35 @@ public abstract class AATree<T> {
                 final int comparison = tree.comparator.compare(value, node.value);
                 if (comparison == 0) {
                     
-                    if (isLeafNode(node))
+                    if (node.isLeafNode())
                         return emptyTree(tree.comparator);
                     
                     return node.left.visit(new Visitor<AATree<T>,T>() {
                         
                         @Override
                         public AATree<T> visitLeaf(Leaf<T> leaf) {
-                            return rebalanceAfterRemoval(
-                                    removeAndReplaceWithSuccessor(node));
+                            return node.removeAndReplaceWithSuccessor()
+                                    .rebalanceAfterRemoval();
                         }
                         
                         @Override
                         public AATree<T> visitNode(Node<T> lnode) {
-                            return rebalanceAfterRemoval(
-                                    removeAndReplaceWithPredecessor(node));
+                            return node.removeAndReplaceWithPredecessor()
+                                    .rebalanceAfterRemoval();
                         }
                         
                     });
                     
                 }
                 else if (comparison < 0) {
-                    return rebalanceAfterRemoval(new Node<T>(
+                    return new Node<T>(
                             node.level, node.value, node.left.visit(this), node.right,
-                            node.comparator));
+                            node.comparator).rebalanceAfterRemoval();
                 }
                 else {
-                    return rebalanceAfterRemoval(new Node<T>(
+                    return new Node<T>(
                             node.level, node.value, node.left, node.right.visit(this),
-                            node.comparator));
+                            node.comparator).rebalanceAfterRemoval();
                 }
                 
             }
@@ -217,9 +175,17 @@ public abstract class AATree<T> {
         
     }
     
-    private static <T> AATree<T> rebalanceAfterRemoval(AATree<T> tree) {
+    protected AATree<T> skew() {
+        return this.visit(new AATreeSkew<T>());
+    }
+    
+    protected AATree<T> split() {
+        return this.visit(new AATreeSplit<T>());
+    }
+    
+    protected AATree<T> rebalanceAfterRemoval() {
         
-        return tree.visit(new Visitor<AATree<T>,T>() {
+        return this.visit(new Visitor<AATree<T>,T>() {
             
             @Override
             public AATree<T> visitLeaf(Leaf<T> leaf) {
@@ -228,18 +194,18 @@ public abstract class AATree<T> {
             
             @Override
             public AATree<T> visitNode(Node<T> node) {
-                return splitRightChild(split(
-                        skewRightGrandChild(skewRightChild(skew(
-                                decreaseLevel(node))))));
+                return node.decreaseLevel()
+                        .skew().skewRightChild().skewRightGrandChild()
+                        .split().splitRightChild();
             }
             
         });
         
     }
     
-    private static <T> AATree<T> skewRightGrandChild(AATree<T> tree) {
+    private AATree<T> skewRightGrandChild() {
         
-        return tree.visit(new Visitor<AATree<T>,T>() {
+        return this.visit(new Visitor<AATree<T>,T>() {
             
             @Override
             public AATree<T> visitLeaf(Leaf<T> leaf) {
@@ -248,7 +214,7 @@ public abstract class AATree<T> {
             
             @Override
             public AATree<T> visitNode(Node<T> node) {
-                return new Node<T>(node.level, node.value, node.left, skewRightChild(node.right),
+                return new Node<T>(node.level, node.value, node.left, node.right.skewRightChild(),
                         node.comparator);
             }
             
@@ -256,9 +222,9 @@ public abstract class AATree<T> {
         
     }
     
-    private static <T> AATree<T> skewRightChild(AATree<T> tree) {
+    private AATree<T> skewRightChild() {
         
-        return tree.visit(new Visitor<AATree<T>,T>() {
+        return this.visit(new Visitor<AATree<T>,T>() {
             
             @Override
             public AATree<T> visitLeaf(Leaf<T> leaf) {
@@ -267,7 +233,7 @@ public abstract class AATree<T> {
             
             @Override
             public AATree<T> visitNode(Node<T> node) {
-                return new Node<T>(node.level, node.value, node.left, skew(node.right),
+                return new Node<T>(node.level, node.value, node.left, node.right.skew(),
                         node.comparator);
             }
             
@@ -275,9 +241,9 @@ public abstract class AATree<T> {
         
     }
     
-    private static <T> AATree<T> splitRightChild(AATree<T> tree) {
+    private AATree<T> splitRightChild() {
         
-        return tree.visit(new Visitor<AATree<T>,T>() {
+        return this.visit(new Visitor<AATree<T>,T>() {
             
             @Override
             public AATree<T> visitLeaf(Leaf<T> leaf) {
@@ -286,7 +252,7 @@ public abstract class AATree<T> {
             
             @Override
             public AATree<T> visitNode(Node<T> node) {
-                return new Node<T>(node.level, node.value, node.left, split(node.right),
+                return new Node<T>(node.level, node.value, node.left, node.right.split(),
                         node.comparator);
             }
             
@@ -294,51 +260,9 @@ public abstract class AATree<T> {
         
     }
     
-    /* a node is a leaf node if both its children are Leaf instances */
-    protected static <T> Boolean isLeafNode(Node<T> node) {
+    private Node<T> getRightMost() {
         
-        return node.visit(new Visitor<Boolean,T>() {
-            
-            @Override
-            public Boolean visitLeaf(Leaf<T> leaf) {
-                return false;
-            }
-            
-            @Override
-            public Boolean visitNode(Node<T> node) {
-                
-                if ((node.left instanceof Leaf) &&
-                        (node.right instanceof Leaf)) {
-                    return true;
-                }
-                
-                return false;
-                
-            }
-            
-        });
-        
-    }
-    
-    private static <T> Node<T> removeAndReplaceWithPredecessor(Node<T> node) {
-        
-        Node<T> predecessor = getRightMost(node.left);
-        return new Node<T>(node.level, predecessor.value,
-                        removeRightMost(node.left), node.right, node.comparator);
-        
-    }
-    
-    private static <T> Node<T> removeAndReplaceWithSuccessor(Node<T> node) {
-        
-        Node<T> successor = getLeftMost(node.right);
-        return new Node<T>(node.level, successor.value,
-                        node.left, removeLeftMost(node.right), node.comparator);
-        
-    }
-    
-    private static <T> Node<T> getRightMost(final AATree<T> tree) {
-        
-        return tree.visit(new Visitor<Node<T>,T>() {
+        return this.visit(new Visitor<Node<T>,T>() {
             
             @Override
             public Node<T> visitLeaf(Leaf<T> leaf) {
@@ -348,7 +272,7 @@ public abstract class AATree<T> {
             @Override
             public Node<T> visitNode(Node<T> node) {
                 
-                if (isLeafNode(node))
+                if (node.isLeafNode())
                     return node;
                 
                 return node.right.visit(this);
@@ -359,9 +283,9 @@ public abstract class AATree<T> {
         
     }
     
-    private static <T> Node<T> getLeftMost(final AATree<T> tree) {
+    private Node<T> getLeftMost() {
         
-        return tree.visit(new Visitor<Node<T>,T>() {
+        return this.visit(new Visitor<Node<T>,T>() {
             
             @Override
             public Node<T> visitLeaf(Leaf<T> leaf) {
@@ -371,7 +295,7 @@ public abstract class AATree<T> {
             @Override
             public Node<T> visitNode(Node<T> node) {
                 
-                if (isLeafNode(node))
+                if (node.isLeafNode())
                     return node;
                 
                 return node.left.visit(this);
@@ -382,9 +306,9 @@ public abstract class AATree<T> {
         
     }
     
-    private static <T> AATree<T> removeRightMost(AATree<T> tree) {
+    private AATree<T> removeRightMost() {
         
-        return tree.visit(new Visitor<AATree<T>,T>() {
+        return this.visit(new Visitor<AATree<T>,T>() {
             
             @Override
             public AATree<T> visitLeaf(Leaf<T> leaf) {
@@ -394,12 +318,12 @@ public abstract class AATree<T> {
             @Override
             public AATree<T> visitNode(Node<T> node) {
                 
-                if (isLeafNode(node))
+                if (node.isLeafNode())
                     return emptyTree(node.comparator);
                 
-                return rebalanceAfterRemoval(new Node<T>(
+                return new Node<T>(
                         node.level, node.value, node.left, node.right.visit(this),
-                        node.comparator));
+                        node.comparator).rebalanceAfterRemoval();
                 
             }
             
@@ -407,9 +331,9 @@ public abstract class AATree<T> {
         
     }
     
-    private static <T> AATree<T> removeLeftMost(AATree<T> tree) {
+    private AATree<T> removeLeftMost() {
         
-        return tree.visit(new Visitor<AATree<T>,T>() {
+        return this.visit(new Visitor<AATree<T>,T>() {
             
             @Override
             public AATree<T> visitLeaf(Leaf<T> leaf) {
@@ -419,12 +343,12 @@ public abstract class AATree<T> {
             @Override
             public AATree<T> visitNode(Node<T> node) {
                 
-                if (isLeafNode(node))
+                if (node.isLeafNode())
                     return emptyTree(node.comparator);
                 
-                return rebalanceAfterRemoval(new Node<T>(
+                return new Node<T>(
                         node.level, node.value, node.left.visit(this), node.right,
-                        node.comparator));
+                        node.comparator).rebalanceAfterRemoval();
                 
             }
             
@@ -432,28 +356,9 @@ public abstract class AATree<T> {
         
     }
     
-    private static <T> AATree<T> decreaseLevel(Node<T> node) {
+    private AATree<T> changeLevel(final int newLevel) {
         
-        int correctLevel = minLevelOfChildren(node) + 1;
-        if (correctLevel < node.level) {
-            AATree<T> right = correctLevel < level(node.right) ?
-                    changeLevel(node.right, correctLevel) : node.right;
-            return new Node<T>(correctLevel, node.value, node.left, right, node.comparator);
-        }
-        
-        return node;
-        
-    }
-    
-    private static <T> int minLevelOfChildren(final Node<T> node) {
-        
-        return level(node.left) < level(node.right) ? level(node.left) : level(node.right);
-        
-    }
-    
-    private static <T> AATree<T> changeLevel(final AATree<T> tree, final int newLevel) {
-        
-        return tree.visit(new Visitor<AATree<T>,T>() {
+        return this.visit(new Visitor<AATree<T>,T>() {
             
             @Override
             public AATree<T> visitLeaf(Leaf<T> leaf) {
@@ -470,9 +375,9 @@ public abstract class AATree<T> {
         
     }
     
-    private static <T> int level(AATree<T> tree) {
+    private int level() {
         
-        return tree.visit(new Visitor<Integer,T>() {
+        return this.visit(new Visitor<Integer,T>() {
             
             @Override
             public Integer visitLeaf(Leaf<T> leaf) {
@@ -482,118 +387,6 @@ public abstract class AATree<T> {
             @Override
             public Integer visitNode(Node<T> node) {
                 return node.level;
-            }
-            
-        });
-        
-    }
-    
-    private static <T> AATree<T> skew(final AATree<T> tree) {
-        
-        return tree.visit(new AATree.Visitor<AATree<T>,T>() {
-            
-            @Override
-            public AATree<T> visitLeaf(Leaf<T> leaf) {
-                return tree;
-            }
-            
-            @Override
-            public AATree<T> visitNode(final Node<T> node) {
-                
-                return node.left.visit(new AATree.Visitor<AATree<T>,T>() {
-                    
-                    @Override
-                    public AATree<T> visitLeaf(Leaf<T> leaf) {
-                        return node;
-                    }
-                    
-                    @Override
-                    public AATree<T> visitNode(Node<T> childNode) {
-                        
-                        if (node.level == childNode.level) {
-                            return new Node<T>(
-                                    childNode.level, childNode.value,
-                                    childNode.left,
-                                    new Node<T>(
-                                            node.level, node.value,
-                                            childNode.right,
-                                            node.right,
-                                            tree.comparator),
-                                    tree.comparator);
-                        }
-                        else {
-                            return node;
-                        }
-                        
-                    }
-                    
-                });
-                
-            }
-            
-        });
-        
-    }
-    
-    private static <T> AATree<T> split(final AATree<T> tree) {
-        
-        return tree.visit(new AATree.Visitor<AATree<T>,T>() {
-            
-            @Override
-            public AATree<T> visitLeaf(Leaf<T> leaf) {
-                return tree;
-            }
-            
-            @Override
-            public AATree<T> visitNode(final Node<T> node) {
-                
-                return node.right.visit(new AATree.Visitor<AATree<T>,T>() {
-                    
-                    @Override
-                    public AATree<T> visitLeaf(Leaf<T> leaf) {
-                        return tree;
-                    }
-                    
-                    @Override
-                    public AATree<T> visitNode(final Node<T> childNode) {
-                        
-                        return childNode.right.visit(new AATree.Visitor<AATree<T>,T>() {
-                            
-                            @Override
-                            public AATree<T> visitLeaf(Leaf<T> leaf) {
-                                return tree;
-                            }
-                            
-                            @Override
-                            public AATree<T> visitNode(Node<T> grandChildNode) {
-                                
-                                if (node.level == grandChildNode.level) {
-                                    
-                                    return new Node<T>(
-                                            childNode.level+1, childNode.value,
-                                            new Node<T>(
-                                                    node.level, node.value,
-                                                    node.left,
-                                                    childNode.left,
-                                                    tree.comparator),
-                                            grandChildNode,
-                                            tree.comparator);
-                                    
-                                }
-                                else {
-                                    
-                                    return tree;
-                                    
-                                }
-                                
-                            }
-                            
-                        });
-                        
-                    }
-                    
-                });
-                
             }
             
         });

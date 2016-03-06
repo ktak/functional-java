@@ -278,7 +278,7 @@ public class AATreeTest {
     
     private <T> Boolean satisfiesInvariant1(Node<T> node) {
         
-        if (!AATree.isLeafNode(node))
+        if (!node.isLeafNode())
             return true;
         
         if (node.level == 1)
