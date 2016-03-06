@@ -60,22 +60,8 @@ public abstract class AATree<T> {
         
     }
     
-    public static <T> Integer size(AATree<T> tree) {
-        
-        return tree.visit(new AATree.Visitor<Integer,T>() {
-
-            @Override
-            public Integer visitLeaf(Leaf<T> leaf) {
-                return 0;
-            }
-
-            @Override
-            public Integer visitNode(Node<T> node) {
-                return 1 + node.left.visit(this) + node.right.visit(this);
-            }
-            
-        });
-        
+    public Long size() {
+        return this.visit(new AATreeSize<T>());
     }
     
     public Boolean contains(final T value) {

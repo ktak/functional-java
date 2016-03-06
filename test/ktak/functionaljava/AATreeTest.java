@@ -26,14 +26,14 @@ public class AATreeTest {
     public void testInsertionSize() {
         
         AATree<Integer> tree = AATree.emptyTree(cmp);
-        Integer treeSize = 0;
+        Long treeSize = 0L;
         
         List<Integer> list = consecutiveIntegerList(1000);
         
         for (Integer val : list) {
             tree = tree.insert(val);
             treeSize++;
-            Assert.assertEquals(treeSize, AATree.size(tree));
+            Assert.assertEquals(treeSize, tree.size());
         }
         
     }
@@ -104,7 +104,7 @@ public class AATreeTest {
         
         AATree<Integer> tree = AATree.emptyTree(cmp);
         List<Integer> list = consecutiveIntegerList(1000);
-        Integer treeSize = 0;
+        Long treeSize = 0L;
         for (Integer uniqueInt : list) {
             tree = tree.insert(uniqueInt);
             treeSize++;
@@ -113,7 +113,7 @@ public class AATreeTest {
         for (Integer uniqueInt : list) {
             tree = tree.remove(uniqueInt);
             treeSize--;
-            Assert.assertEquals(treeSize, AATree.size(tree));
+            Assert.assertEquals(treeSize, tree.size());
             Assert.assertFalse(tree.contains(uniqueInt));
         }
         
