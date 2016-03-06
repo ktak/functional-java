@@ -4,7 +4,8 @@ class ListReverse<T> implements List.Visitor<List<T>,T> {
     
     private final List<T> reversed;
     
-    public ListReverse(List<T> reversed) { this.reversed = reversed; }
+    public ListReverse() { this.reversed = new List.Nil<T>(); }
+    private ListReverse(List<T> reversed) { this.reversed = reversed; }
     
     @Override
     public List<T> visitNil() {

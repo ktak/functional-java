@@ -48,7 +48,7 @@ public abstract class List<T> {
     }
     
     public List<T> reverse() {
-        return this.visit(new ListReverse<T>(new Nil<T>()));
+        return this.visit(new ListReverse<T>());
     }
     
     public List<T> append(List<T> end) {
