@@ -1,4 +1,4 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
 public interface Eq<T> {
     

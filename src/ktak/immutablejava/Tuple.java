@@ -1,4 +1,4 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
 public class Tuple<A,B> {
     

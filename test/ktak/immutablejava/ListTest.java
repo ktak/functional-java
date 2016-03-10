@@ -1,6 +1,9 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
 import org.junit.Test;
+
+import ktak.immutablejava.Eq;
+import ktak.immutablejava.List;
 
 import org.junit.Assert;
 

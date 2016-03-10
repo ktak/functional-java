@@ -1,4 +1,4 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
 class ListAppend<T> implements List.Visitor<List<T>,T> {
     

@@ -1,4 +1,4 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
 class ListReverse<T> implements List.Visitor<List<T>,T> {
     

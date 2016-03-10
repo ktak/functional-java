@@ -1,4 +1,4 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
 class ListEqualTo<T> implements List.Visitor<Boolean,T> {
     

@@ -1,4 +1,4 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Random;
 
 import org.junit.Test;
+
+import ktak.immutablejava.AATreeMap;
+import ktak.immutablejava.Option;
+
 import org.junit.Assert;
 
 public class AATreeMapTest {

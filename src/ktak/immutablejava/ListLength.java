@@ -1,4 +1,4 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
 class ListLength<T> implements List.Visitor<Long,T> {
     

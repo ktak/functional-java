@@ -1,8 +1,8 @@
-package ktak.functionaljava;
+package ktak.immutablejava;
 
-import ktak.functionaljava.AATree.Leaf;
-import ktak.functionaljava.AATree.Node;
-import ktak.functionaljava.AATree.Visitor;
+import ktak.immutablejava.AATree.Leaf;
+import ktak.immutablejava.AATree.Node;
+import ktak.immutablejava.AATree.Visitor;
 
 class AATreeRemove<T> implements AATree.Visitor<AATree<T>,T> {
     
