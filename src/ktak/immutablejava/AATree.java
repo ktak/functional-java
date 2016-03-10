@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 public abstract class AATree<T> {
     
-    protected final Comparator<T> comparator;
+    public final Comparator<T> comparator;
     
     private AATree(Comparator<T> comparator) {
         this.comparator = comparator;
