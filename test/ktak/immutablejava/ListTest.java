@@ -9,10 +9,19 @@ import org.junit.Assert;
 
 public class ListTest {
     
-    private static final Eq<Integer> eq = new Eq<Integer>() {
+    private static final Eq<Integer> intEq = new Eq<Integer>() {
 
         @Override
         public boolean equals(Integer t1, Integer t2) {
+            return t1.equals(t2);
+        }
+        
+    };
+    
+    private static final Eq<String> strEq = new Eq<String>() {
+        
+        @Override
+        public boolean equals(String t1, String t2) {
             return t1.equals(t2);
         }
         
@@ -40,19 +49,19 @@ public class ListTest {
         
         List<Integer> l4 = new List.Nil<Integer>().cons(9).cons(3).cons(-1);
         
-        Assert.assertTrue(new List.Nil<Integer>().equalTo(new List.Nil<Integer>(), eq));
+        Assert.assertTrue(new List.Nil<Integer>().equalTo(new List.Nil<Integer>(), intEq));
         
-        Assert.assertTrue(l1.equalTo(l1, eq));
+        Assert.assertTrue(l1.equalTo(l1, intEq));
         
-        Assert.assertTrue(l1.equalTo(l2, eq));
+        Assert.assertTrue(l1.equalTo(l2, intEq));
         
-        Assert.assertFalse(new List.Nil<Integer>().equalTo(l1, eq));
+        Assert.assertFalse(new List.Nil<Integer>().equalTo(l1, intEq));
         
-        Assert.assertFalse(l2.equalTo(new List.Nil<Integer>(), eq));
+        Assert.assertFalse(l2.equalTo(new List.Nil<Integer>(), intEq));
         
-        Assert.assertFalse(l1.equalTo(l3, eq));
+        Assert.assertFalse(l1.equalTo(l3, intEq));
         
-        Assert.assertFalse(l2.equalTo(l4, eq));
+        Assert.assertFalse(l2.equalTo(l4, intEq));
         
     }
     
@@ -63,11 +72,11 @@ public class ListTest {
         
         List<Integer> l2 = new List.Nil<Integer>().cons(3).cons(2).cons(1);
         
-        Assert.assertTrue(new List.Nil<Integer>().equalTo(new List.Nil<Integer>().reverse(), eq));
+        Assert.assertTrue(new List.Nil<Integer>().equalTo(new List.Nil<Integer>().reverse(), intEq));
         
-        Assert.assertTrue(l1.equalTo(l1.reverse().reverse(), eq));
+        Assert.assertTrue(l1.equalTo(l1.reverse().reverse(), intEq));
         
-        Assert.assertTrue(l1.equalTo(l2.reverse(), eq));
+        Assert.assertTrue(l1.equalTo(l2.reverse(), intEq));
         
     }
     
@@ -80,9 +89,31 @@ public class ListTest {
         
         List<Integer> l3 = new List.Nil<Integer>().cons(6).cons(5).cons(4).cons(3).cons(2).cons(1);
         
-        Assert.assertTrue(l3.equalTo(l1.append(l2), eq));
+        Assert.assertTrue(l3.equalTo(l1.append(l2), intEq));
         
-        Assert.assertTrue(l1.equalTo(l1.append(new List.Nil<Integer>()), eq));
+        Assert.assertTrue(l1.equalTo(l1.append(new List.Nil<Integer>()), intEq));
+        
+    }
+    
+    @Test
+    public void testMap() {
+        
+        List<Integer> l1 = new List.Nil<Integer>().cons(3).cons(2).cons(1);
+        
+        Function<Integer,String> f = new Function<Integer,String>() {
+            
+            @Override
+            public String apply(Integer x) {
+                return x.toString();
+            }
+            
+        };
+        
+        List<String> l2 = new List.Nil<String>().cons("3").cons("2").cons("1");
+        
+        Assert.assertTrue(new List.Nil<Integer>().map(f).equalTo(new List.Nil<String>(), strEq));
+        
+        Assert.assertTrue(l1.map(f).equalTo(l2, strEq));
         
     }
     

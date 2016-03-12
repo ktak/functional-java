@@ -55,4 +55,8 @@ public abstract class List<T> {
         return this.visit(new ListAppend<T>(end));
     }
     
+    public <U> List<U> map(Function<T,U> f) {
+        return this.visit(new ListMap<T,U>(f));
+    }
+    
 }
