@@ -117,4 +117,15 @@ public class ListTest {
         
     }
     
+    @Test
+    public void testIsEmpty() {
+        
+        List<Integer> l = new List.Nil<Integer>().cons(1);
+        
+        Assert.assertTrue(new List.Nil<Integer>().isEmpty());
+        
+        Assert.assertFalse(l.isEmpty());
+        
+    }
+    
 }
