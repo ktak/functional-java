@@ -4,7 +4,7 @@ public abstract class List<T> {
     
     public abstract <R> R visit(Visitor<R,T> visitor);
     
-    public static interface Visitor<R,T> {
+    public interface Visitor<R,T> {
         public R visitNil();
         public R visitCons(T head, List<T> tail);
     }

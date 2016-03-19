@@ -10,7 +10,7 @@ public abstract class AATree<T> {
         this.comparator = comparator;
     }
     
-    public static interface Visitor<R,T> {
+    public interface Visitor<R,T> {
         public R visitLeaf(Leaf<T> leaf);
         public R visitNode(Node<T> node);
     }
