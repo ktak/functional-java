@@ -4,6 +4,8 @@ public abstract class Option<T> {
     
     public abstract <R> R visit(Visitor<R,T> visitor);
     
+    public abstract <U> Option<U> mapSome(Function<T,U> f);
+    
     public interface Visitor<R,T> {
         public R visitNone();
         public R visitSome(T value);
@@ -14,6 +16,11 @@ public abstract class Option<T> {
         @Override
         public <R> R visit(Visitor<R, T> visitor) {
             return visitor.visitNone();
+        }
+        
+        @Override
+        public <U> Option<U> mapSome(Function<T, U> f) {
+            return none();
         }
         
     }
@@ -29,6 +36,11 @@ public abstract class Option<T> {
         @Override
         public <R> R visit(Visitor<R, T> visitor) {
             return visitor.visitSome(val);
+        }
+        
+        @Override
+        public <U> Option<U> mapSome(Function<T, U> f) {
+            return some(f.apply(val));
         }
         
     }
