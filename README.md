@@ -1,6 +1,6 @@
 ## Lists
 ```
-import ktak.functionaljava.List;
+import ktak.immutablejava.List;
 ```
 ```
 List<Integer> list = new List.Nil<Integer>().cons(1).cons(2).cons(3);
@@ -27,7 +27,7 @@ List<Integer> list_reversed = list.visit(new ListReverse());
 class ListString implements List.Visitor<String, Integer> {
 
    @Override
-   public String visitNil() { return "[]"; }
+   public String visitNil() { return "nil"; }
   
    @Override
    public String visitCons(Integer head, List<Integer> tail) {
