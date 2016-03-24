@@ -122,6 +122,19 @@ public class AATreeTest {
     }
     
     @Test
+    public void testSortedList() {
+        
+        AATree<Integer> tree = AATree.emptyTree(cmp);
+        List<Integer> randomList = randomIntegerList(1000, 100);
+        for (Integer random : randomList) {
+            tree = tree.insert(random);
+        }
+        
+        Assert.assertTrue(tree.sortedList().visit(new ListSorted(cmp)));
+        
+    }
+    
+    @Test
     public void testInvariants() {
         
         AATree<Integer> tree = AATree.emptyTree(cmp);
@@ -180,6 +193,50 @@ public class AATreeTest {
         }
         
         return true;
+        
+    }
+    
+    private class ListSorted implements ktak.immutablejava.List.Visitor<Boolean, Integer> {
+        
+        private final Comparator<Integer> cmp;
+        
+        public ListSorted(Comparator<Integer> cmp) { this.cmp = cmp; }
+        
+        @Override
+        public Boolean visitNil() {
+            return true;
+        }
+        
+        @Override
+        public Boolean visitCons(
+                final Integer head1,
+                ktak.immutablejava.List<Integer> tail) {
+            
+            if (!tail.visit(new ktak.immutablejava.List.Visitor<Boolean, Integer>() {
+                
+                @Override
+                public Boolean visitNil() {
+                    return true;
+                }
+                
+                @Override
+                public Boolean visitCons(
+                        Integer head2,
+                        ktak.immutablejava.List<Integer> tail) {
+                    
+                    if (cmp.compare(head1, head2) > 0)
+                        return false;
+                    
+                    return true;
+                    
+                }
+                
+            }))
+                return false;
+            
+            return tail.visit(this);
+            
+        }
         
     }
     

@@ -124,6 +124,10 @@ public abstract class AATree<T> {
         return this.visit(new AATreeRemove<T>(value));
     }
     
+    public List<T> sortedList() {
+        return this.visit(new AATreeSortedList<T>());
+    }
+    
     protected AATree<T> skew() {
         return this.visit(new AATreeSkew<T>());
     }
