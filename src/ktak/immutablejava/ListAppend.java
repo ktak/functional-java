@@ -13,7 +13,7 @@ class ListAppend<T> implements List.Visitor<List<T>,T> {
     
     @Override
     public List<T> visitCons(T head, List<T> tail) {
-        return tail.visit(new ListAppend<T>(l2)).cons(head);
+        return tail.visit(this).cons(head);
     }
     
 }
