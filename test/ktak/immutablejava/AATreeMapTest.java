@@ -14,7 +14,7 @@ import org.junit.Assert;
 
 public class AATreeMapTest {
     
-private static final Comparator<Integer> cmp = new Comparator<Integer>() {
+    private static final Comparator<Integer> cmp = new Comparator<Integer>() {
         
         @Override
         public int compare(Integer arg0, Integer arg1) {
