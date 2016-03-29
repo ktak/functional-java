@@ -13,10 +13,16 @@ public class AATreeSet<T> {
         this.tree = AATree.emptyTree(comparator);
     }
     
-    private AATreeSet(AATree<T> tree) { this.tree = tree; }
+    private AATreeSet(AATree<T> tree) {
+        this.tree = tree;
+    }
     
     public static <T> AATreeSet<T> emptySet(Comparator<T> comparator) {
         return new AATreeSet<T>(comparator);
+    }
+    
+    public Comparator<T> getComparator() {
+        return tree.comparator;
     }
     
     public AATreeSet<T> insert(T value) {
