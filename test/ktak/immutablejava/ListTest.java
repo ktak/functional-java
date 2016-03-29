@@ -5,6 +5,8 @@ import org.junit.Test;
 import ktak.immutablejava.Eq;
 import ktak.immutablejava.List;
 
+import java.util.Comparator;
+
 import org.junit.Assert;
 
 public class ListTest {
@@ -23,6 +25,15 @@ public class ListTest {
         @Override
         public boolean equals(String t1, String t2) {
             return t1.equals(t2);
+        }
+        
+    };
+    
+    private static final Comparator<Integer> intCmp = new Comparator<Integer>() {
+        
+        @Override
+        public int compare(Integer arg0, Integer arg1) {
+            return arg0.compareTo(arg1);
         }
         
     };
@@ -125,6 +136,32 @@ public class ListTest {
         Assert.assertTrue(new List.Nil<Integer>().isEmpty());
         
         Assert.assertFalse(l.isEmpty());
+        
+    }
+    
+    @Test
+    public void testCompareTo() {
+        
+        Assert.assertEquals(0, new List.Nil<Integer>().compareTo(
+                new List.Nil<Integer>(), intCmp));
+        
+        Assert.assertEquals(-1, new List.Nil<Integer>().compareTo(
+                new List.Nil<Integer>().cons(0), intCmp));
+        
+        Assert.assertEquals(1, new List.Nil<Integer>().cons(0).compareTo(
+                new List.Nil<Integer>(), intCmp));
+        
+        Assert.assertEquals(0, new List.Nil<Integer>().cons(0).compareTo(
+                new List.Nil<Integer>().cons(0), intCmp));
+        
+        Assert.assertEquals(1, new List.Nil<Integer>().cons(3).cons(2).cons(1).compareTo(
+                new List.Nil<Integer>().cons(2).cons(1), intCmp));
+        
+        Assert.assertEquals(0, new List.Nil<Integer>().cons(1).cons(2).cons(3).compareTo(
+                new List.Nil<Integer>().cons(1).cons(2).cons(3), intCmp));
+        
+        Assert.assertEquals(1, new List.Nil<Integer>().cons(1).cons(2).cons(3).compareTo(
+                new List.Nil<Integer>().cons(0).cons(2).cons(3), intCmp));
         
     }
     

@@ -1,5 +1,7 @@
 package ktak.immutablejava;
 
+import java.util.Comparator;
+
 public abstract class List<T> {
     
     public abstract <R> R visit(Visitor<R,T> visitor);
@@ -43,7 +45,7 @@ public abstract class List<T> {
         return this.visit(new ListLength<T>());
     }
     
-    public Boolean equalTo(List<T> other, final Eq<T> eq) {
+    public Boolean equalTo(List<T> other, Eq<T> eq) {
         return this.visit(new ListEqualTo<T>(other, eq));
     }
     
@@ -61,6 +63,10 @@ public abstract class List<T> {
     
     public Boolean isEmpty() {
         return this.visit(new ListEmpty<T>());
+    }
+    
+    public int compareTo(List<T> other, Comparator<T> cmp) {
+        return this.visit(new ListCompareTo<T>(other, cmp));
     }
     
 }
