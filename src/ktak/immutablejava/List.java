@@ -69,4 +69,8 @@ public abstract class List<T> {
         return this.visit(new ListCompareTo<T>(other, cmp));
     }
     
+    public <U> U foldRight(U init, Function<T,Function<U,U>> f) {
+        return this.visit(new ListFoldRight<T,U>(init, f));
+    }
+    
 }

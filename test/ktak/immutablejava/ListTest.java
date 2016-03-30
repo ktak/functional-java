@@ -165,4 +165,34 @@ public class ListTest {
         
     }
     
+    @Test
+    public void testFoldRight() {
+        
+        List<Integer> l = new List.Nil<Integer>().cons(1).cons(2).cons(3);
+        
+        Function<Integer, Function<Integer, Integer>> f =
+                new Function<Integer, Function<Integer, Integer>>() {
+            
+                    @Override
+                    public Function<Integer, Integer> apply(final Integer listElem) {
+                        return new Function<Integer, Integer>() {
+                            
+                            @Override
+                            public Integer apply(Integer x) {
+                                return listElem - x;
+                            }
+                            
+                        };
+                    }
+            
+        };
+        
+        Assert.assertEquals((Integer)0, new List.Nil<Integer>().foldRight(0, f));
+        
+        Assert.assertEquals((Integer)2, l.foldRight(0, f));
+        
+        Assert.assertEquals((Integer)1, l.foldRight(1, f));
+        
+    }
+    
 }
