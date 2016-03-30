@@ -7,6 +7,8 @@ public abstract class Either<X,Y> {
     public abstract <Z> Either<Z,Y> mapLeft(Function<X,Z> f);
     public abstract <Z> Either<X,Z> mapRight(Function<Y,Z> f);
     
+    public abstract <Z> Z match(Function<X,Z> leftCase, Function<Y,Z> rightCase);
+    
     public interface Visitor<R,X,Y> {
         public R visitLeft(X x);
         public R visitRight(Y y);
@@ -33,6 +35,11 @@ public abstract class Either<X,Y> {
             return left(val);
         }
         
+        @Override
+        public <Z> Z match(Function<X, Z> leftCase, Function<Y, Z> rightCase) {
+            return leftCase.apply(val);
+        }
+        
     }
     
     public static final class Right<X,Y> extends Either<X,Y> {
@@ -54,6 +61,11 @@ public abstract class Either<X,Y> {
         @Override
         public <Z> Either<X, Z> mapRight(Function<Y, Z> f) {
             return right(f.apply(val));
+        }
+        
+        @Override
+        public <Z> Z match(Function<X, Z> leftCase, Function<Y, Z> rightCase) {
+            return rightCase.apply(val);
         }
         
     }
