@@ -96,9 +96,9 @@ public abstract class AATree<T> {
         
         protected Node<T> removeAndReplaceWithPredecessor() {
             
-            Node<T> predecessor = this.left.getRightMost();
-            return new Node<T>(this.level, predecessor.value,
-                    this.left.removeRightMost(), this.right);
+            Node<T> predecessor = left.getRightMost();
+            return new Node<T>(level, predecessor.value,
+                    left.removeRightMost(), right);
             
         }
         
@@ -134,6 +134,10 @@ public abstract class AATree<T> {
     
     protected AATree<T> split() {
         return this.visit(new AATreeSplit<T>());
+    }
+    
+    protected AATree<T> rebalanceAfterInsertion() {
+        return this.skew().split();
     }
     
     protected AATree<T> rebalanceAfterRemoval() {
