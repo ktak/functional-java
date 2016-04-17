@@ -4,6 +4,10 @@ public abstract class Option<T> {
     
     public abstract <R> R visit(Visitor<R,T> visitor);
     
+    public abstract <R> R match(
+            Function<Unit,R> noneCase,
+            Function<T,R> someCase);
+    
     public abstract <U> Option<U> mapSome(Function<T,U> f);
     
     public interface Visitor<R,T> {
@@ -21,6 +25,13 @@ public abstract class Option<T> {
         @Override
         public <U> Option<U> mapSome(Function<T, U> f) {
             return none();
+        }
+        
+        @Override
+        public <R> R match(
+                Function<Unit, R> noneCase,
+                Function<T, R> someCase) {
+            return noneCase.apply(Unit.unit);
         }
         
     }
@@ -41,6 +52,13 @@ public abstract class Option<T> {
         @Override
         public <U> Option<U> mapSome(Function<T, U> f) {
             return some(f.apply(val));
+        }
+        
+        @Override
+        public <R> R match(
+                Function<Unit, R> noneCase,
+                Function<T, R> someCase) {
+            return someCase.apply(val);
         }
         
     }
