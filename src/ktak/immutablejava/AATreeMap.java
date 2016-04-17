@@ -67,4 +67,17 @@ public class AATreeMap<K,V> {
         return tree.size();
     }
     
+    public List<K> sortedKeys() {
+        
+        return tree.sortedList().map(new Function<Tuple<K,V>,K>() {
+            
+            @Override
+            public K apply(Tuple<K, V> x) {
+                return x.left;
+            }
+            
+        });
+        
+    }
+    
 }
