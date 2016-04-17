@@ -6,6 +6,10 @@ public abstract class List<T> {
     
     public abstract <R> R visit(Visitor<R,T> visitor);
     
+    public abstract <R> R match(
+            Function<Unit,R> nilCase,
+            Function<Tuple<T,List<T>>,R> consCase);
+    
     public interface Visitor<R,T> {
         public R visitNil();
         public R visitCons(T head, List<T> tail);
@@ -16,6 +20,13 @@ public abstract class List<T> {
         @Override
         public <R> R visit(Visitor<R, T> visitor) {
             return visitor.visitNil();
+        }
+        
+        @Override
+        public <R> R match(
+                Function<Unit, R> nilCase,
+                Function<Tuple<T, List<T>>, R> consCase) {
+            return nilCase.apply(Unit.unit);
         }
         
     }
@@ -33,6 +44,13 @@ public abstract class List<T> {
         @Override
         public <R> R visit(Visitor<R, T> visitor) {
             return visitor.visitCons(head, tail);
+        }
+        
+        @Override
+        public <R> R match(
+                Function<Unit, R> nilCase,
+                Function<Tuple<T, List<T>>, R> consCase) {
+            return consCase.apply(Tuple.create(head, tail));
         }
         
     }
