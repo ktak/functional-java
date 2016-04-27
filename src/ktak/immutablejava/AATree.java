@@ -128,6 +128,12 @@ public abstract class AATree<T> {
         return this.visit(new AATreeSortedList<T>());
     }
     
+    public <U> AATree<U> map(
+            Function<T,U> f,
+            Comparator<U> cmp) {
+        return this.visit(new AATreeFMap<T,U>(f, cmp));
+    }
+    
     protected AATree<T> skew() {
         return this.visit(new AATreeSkew<T>());
     }

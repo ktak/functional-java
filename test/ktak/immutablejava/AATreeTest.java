@@ -1,6 +1,7 @@
 package ktak.immutablejava;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -131,6 +132,26 @@ public class AATreeTest {
         }
         
         Assert.assertTrue(tree.sortedList().visit(new ListSorted(cmp)));
+        
+    }
+    
+    @Test
+    public void testMap() {
+        
+        AATree<Integer> tree = AATree.emptyTree(cmp)
+                .insert(0).insert(1).insert(2);
+        AATree<Integer> mappedTree = tree.map(
+                new Function<Integer,Integer>() {
+                    
+                    @Override
+                    public Integer apply(Integer x) {
+                        return x+1;
+                    }
+                    
+                },
+                cmp);
+        
+        Assert.assertEquals(Arrays.asList(1,2,3), sortedListFromTree(mappedTree));
         
     }
     
