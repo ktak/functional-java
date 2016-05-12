@@ -128,9 +128,7 @@ public abstract class AATree<T> {
         return this.visit(new AATreeSortedList<T>());
     }
     
-    public <U> AATree<U> map(
-            Function<T,U> f,
-            Comparator<U> cmp) {
+    public <U> AATree<U> map(Function<T,U> f, Comparator<U> cmp) {
         return this.visit(new AATreeFMap<T,U>(f, cmp));
     }
     

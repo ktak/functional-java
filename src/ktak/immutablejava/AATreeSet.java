@@ -50,6 +50,10 @@ public class AATreeSet<T> {
         return tree.sortedList();
     }
     
+    public <U> AATreeSet<U> map(Function<T,U> f, Comparator<U> cmp) {
+        return new AATreeSet<U>(tree.map(f, cmp));
+    }
+    
     public AATreeSet<T> intersection(AATreeSet<T> other) {
         return this.tree.visit(new IntersectionVisitor<T>(other));
     }

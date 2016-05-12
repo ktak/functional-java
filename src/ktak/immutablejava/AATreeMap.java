@@ -128,16 +128,14 @@ public class AATreeMap<K,V> {
     }
     
     public <L,W> AATreeMap<L,W> mapKV(
-            final Function<K,L> fk,
-            final Function<V,W> fv,
+            final Function<Tuple<K,V>,Tuple<L,W>> f,
             Comparator<L> cmp) {
         
         return new AATreeMap<L,W>(
                 tree.map(new Function<Tuple<K,V>, Tuple<L,W>>() {
                     @Override
                     public Tuple<L,W> apply(Tuple<K,V> x) {
-                        return Tuple.create(
-                                fk.apply(x.left), fv.apply(x.right));
+                        return f.apply(x);
                         }
                     }, new TreeComparator<L,W>(cmp)),
                 cmp);
