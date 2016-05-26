@@ -85,6 +85,10 @@ public class AATreeMap<K,V> {
         return tree.size();
     }
     
+    public List<Tuple<K,V>> sortedKeyValPairs() {
+        return tree.sortedList();
+    }
+    
     public List<K> sortedKeys() {
         
         return tree.sortedList().map(new Function<Tuple<K,V>,K>() {
