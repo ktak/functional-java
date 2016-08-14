@@ -129,6 +129,26 @@ public class ListTest {
     }
     
     @Test
+    public void testMapCat() {
+        
+        List<Integer> l1 = new List.Nil<Integer>().cons(3).cons(2).cons(1);
+        
+        Function<Integer,List<Integer>> f = new Function<Integer,List<Integer>>() {
+            
+            @Override
+            public List<Integer> apply(Integer x) {
+                return new List.Nil<Integer>().cons(x);
+            }
+            
+        };
+        
+        Assert.assertTrue(new List.Nil<Integer>().mapcat(f).equalTo(new List.Nil<Integer>(), intEq));
+        
+        Assert.assertTrue(l1.mapcat(f).equalTo(l1, intEq));
+        
+    }
+    
+    @Test
     public void testIsEmpty() {
         
         List<Integer> l = new List.Nil<Integer>().cons(1);

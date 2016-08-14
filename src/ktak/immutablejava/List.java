@@ -79,6 +79,10 @@ public abstract class List<T> {
         return this.visit(new ListMap<T,U>(f));
     }
     
+    public <U> List<U> mapcat(Function<T,List<U>> f) {
+        return this.visit(new ListMapCat<T,U>(f));
+    }
+    
     public Boolean isEmpty() {
         return this.visit(new ListEmpty<T>());
     }
