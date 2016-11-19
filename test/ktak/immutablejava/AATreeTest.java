@@ -156,6 +156,68 @@ public class AATreeTest {
     }
     
     @Test
+    public void testGetMin() {
+        
+        AATree<Integer> tree = AATree.emptyTree(cmp)
+                .insert(0).insert(1).insert(2);
+        
+        Assert.assertTrue(AATree.emptyTree(cmp).getMin().match(
+                new Function<Option.None<Integer>,Boolean>() {
+                    @Override
+                    public Boolean apply(Option.None<Integer> none) {
+                        return true;
+                    }
+                },
+                new Function<Integer,Boolean>() {
+                    @Override
+                    public Boolean apply(Integer i) {
+                        return false;
+                    }
+                }));
+        Assert.assertTrue(AATree.emptyTree(cmp).getMax().match(
+                new Function<Option.None<Integer>,Boolean>() {
+                    @Override
+                    public Boolean apply(Option.None<Integer> none) {
+                        return true;
+                    }
+                },
+                new Function<Integer,Boolean>() {
+                    @Override
+                    public Boolean apply(Integer i) {
+                        return false;
+                    }
+                }));
+        
+        Assert.assertTrue(tree.getMin().match(
+                new Function<Option.None<Integer>,Boolean>() {
+                    @Override
+                    public Boolean apply(Option.None<Integer> none) {
+                        return false;
+                    }
+                },
+                new Function<Integer,Boolean>() {
+                    @Override
+                    public Boolean apply(Integer i) {
+                        return i.equals(0);
+                    }
+                }));
+        Assert.assertTrue(tree.getMax().match(
+                new Function<Option.None<Integer>,Boolean>() {
+                    @Override
+                    public Boolean apply(Option.None<Integer> none) {
+                        return false;
+                    }
+                },
+                new Function<Integer,Boolean>() {
+                    @Override
+                    public Boolean apply(Integer i) {
+                        return i.equals(2);
+                    }
+                }));
+        
+    }
+    
+    @Test
     public void testInvariants() {
         
         AATree<Integer> tree = AATree.emptyTree(cmp);

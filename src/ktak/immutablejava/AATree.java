@@ -132,6 +132,14 @@ public abstract class AATree<T> {
         return this.visit(new AATreeFMap<T,U>(f, cmp));
     }
     
+    public Option<T> getMin() {
+        return this.visit(new AATreeGetMin<T>());
+    }
+    
+    public Option<T> getMax() {
+        return this.visit(new AATreeGetMax<T>());
+    }
+    
     protected AATree<T> skew() {
         return this.visit(new AATreeSkew<T>());
     }
